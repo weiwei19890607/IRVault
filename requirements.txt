@@ -1,0 +1,2 @@
+# Version used for the verified StickS3 build.
+esphome==2026.7.1

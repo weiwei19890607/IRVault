@@ -1,0 +1,8 @@
+packages:
+  common: !include common.yaml
+
+sticks3_hardware:
+  test_mode: C
+  # NONE is intentional: establish the board's unforced electrical behavior first.
+  # Repeat with UP and DOWN only as directed by the test checklist.
+  button_pull: NONE

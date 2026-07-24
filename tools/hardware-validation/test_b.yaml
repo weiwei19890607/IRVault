@@ -1,0 +1,5 @@
+packages:
+  common: !include common.yaml
+
+sticks3_hardware:
+  test_mode: B

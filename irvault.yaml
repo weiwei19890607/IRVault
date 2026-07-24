@@ -1,0 +1,83 @@
+substitutions:
+  device_name: irvault
+  friendly_name: IRVault
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  min_version: 2026.1.0
+  libraries:
+    - Wire
+    - SPI
+    - M5Unified=https://github.com/m5stack/M5Unified.git#0.2.18
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 8MB
+  framework:
+    type: arduino
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+  level: DEBUG
+  hardware_uart: USB_SERIAL_JTAG
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+      hidden: true
+  ap:
+    ssid: "IRVault Fallback"
+    password: !secret fallback_password
+
+captive_portal:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+time:
+  - platform: sntp
+    id: network_time
+
+external_components:
+  - source:
+      type: local
+      path: components
+
+irvault_app:
+  id: irvault_controller
+
+button:
+  - platform: template
+    name: "Cool"
+    id: irvault_cool
+    icon: "mdi:snowflake"
+    on_press:
+      - lambda: |-
+          id(irvault_controller).request_send_slot(0);
+
+  - platform: template
+    name: "Heat"
+    id: irvault_heat
+    icon: "mdi:fire"
+    on_press:
+      - lambda: |-
+          id(irvault_controller).request_send_slot(1);
+
+  - platform: template
+    name: "Off"
+    id: irvault_off
+    icon: "mdi:power"
+    on_press:
+      - lambda: |-
+          id(irvault_controller).request_send_slot(2);

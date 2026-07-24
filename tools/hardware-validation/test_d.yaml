@@ -1,0 +1,25 @@
+packages:
+  common: !include common.yaml
+
+sticks3_hardware:
+  test_mode: D
+
+remote_receiver:
+  id: sticks3_ir_rx
+  pin:
+    number: GPIO42
+    inverted: true
+    mode:
+      input: true
+  dump:
+    - raw
+  tolerance: 25%
+  filter: 50us
+  idle: 20ms
+  buffer_size: 20kB
+  clock_resolution: 1000000
+  # ESP32-S3 has 192 hardware symbols; DMA permits a larger receive buffer for
+  # long air-conditioner frames without pretending the hardware RAM is larger.
+  rmt_symbols: 1024
+  receive_symbols: 1024
+  use_dma: true

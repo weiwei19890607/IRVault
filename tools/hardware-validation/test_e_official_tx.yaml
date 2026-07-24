@@ -1,0 +1,6 @@
+packages:
+  common: !include common.yaml
+
+# Fully independent electrical control experiment using the official
+# M5.begin -> RMT TX -> EXT_5V initialization order.
+official_tx_probe:
