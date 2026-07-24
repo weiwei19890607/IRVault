@@ -1,0 +1,10 @@
+packages:
+  common: !include common.yaml
+
+# Hardware power and amplifier lifecycle remain under the Phase 0 adapter.
+sticks3_hardware:
+  test_mode: D
+
+# Control experiment: use the same native ESP-IDF RMT receive flow as the
+# official M5Stack StickS3 example, without ESPHome remote_receiver.
+official_rmt_probe:
