@@ -94,21 +94,65 @@ esphome version
 The virtual environment and ESPHome's generated `.esphome` directory are
 excluded from Git.
 
-## Configure Wi-Fi and credentials
+## Create `secrets.yaml`
 
-Create the local configuration:
+ESPHome reads the Wi-Fi credentials and encryption keys from a local
+`secrets.yaml` file. This file is not included in the repository and must be
+created before validating or compiling the firmware.
 
-```bash
-cp secrets.example.yaml secrets.yaml
-openssl rand -base64 32
-```
+1. Copy the provided template from the repository root:
 
-Edit `secrets.yaml` and provide:
+   ```bash
+   cp secrets.example.yaml secrets.yaml
+   ```
 
-- The 2.4 GHz Wi-Fi SSID and password.
-- The 32-byte Base64 API encryption key generated above.
-- A separate, strong OTA password.
-- A fallback access-point password containing at least eight characters.
+2. Generate three independent values. Run each command separately and keep its
+   output for the next step:
+
+   ```bash
+   # ESPHome Native API encryption key: exactly 32 random bytes in Base64
+   openssl rand -base64 32
+
+   # Strong OTA update password
+   openssl rand -hex 24
+
+   # Fallback access-point password
+   openssl rand -base64 18
+   ```
+
+3. Open the new file:
+
+   ```bash
+   nano secrets.yaml
+   ```
+
+4. Replace every placeholder with the appropriate value:
+
+   ```yaml
+   wifi_ssid: "YOUR_2_4_GHZ_WIFI_NAME"
+   wifi_password: "YOUR_WIFI_PASSWORD"
+   api_encryption_key: "PASTE_THE_BASE64_32_BYTE_KEY_HERE"
+   ota_password: "PASTE_THE_HEX_OTA_PASSWORD_HERE"
+   fallback_password: "PASTE_THE_FALLBACK_PASSWORD_HERE"
+   ```
+
+   The API encryption key must be the unmodified output of
+   `openssl rand -base64 32`. The fallback password must contain at least eight
+   characters. Use different values for the API key, OTA password, and
+   fallback password.
+
+5. In `nano`, press `Control-O`, then Enter to save, and `Control-X` to exit.
+   Restrict the file so only the current macOS user can read it:
+
+   ```bash
+   chmod 600 secrets.yaml
+   ```
+
+6. Confirm that the resulting configuration is valid:
+
+   ```bash
+   esphome config irvault.yaml
+   ```
 
 The repository-level `.gitignore` excludes every `secrets.yaml` file. Never
 paste real credentials into issues, logs, screenshots, or committed files.
@@ -206,21 +250,6 @@ See the [device test checklist](docs/device-test.zh-CN.md) for real-hardware
 acceptance testing. The standalone tests originally used to validate ESPHome,
 M5Unified/M5PM1, the LCD, buttons, and RMT are preserved under
 [`tools/hardware-validation`](tools/hardware-validation/).
-
-## Before publishing to GitHub
-
-After initializing the repository, confirm that the ignore rules are active:
-
-```bash
-git init
-git check-ignore -v secrets.yaml
-git check-ignore -v tools/hardware-validation/secrets.yaml
-git status --short --ignored
-```
-
-Both real `secrets.yaml` files, `.venv`, `.esphome`, build products, logs, and
-operating-system caches must appear as ignored and must not be staged.
-`secrets.example.yaml` should remain trackable.
 
 ## License
 
